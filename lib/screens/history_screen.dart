@@ -1,33 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../models/history_entry.dart';
+import '../state/counter_scope.dart';
 import '../widgets/history_badge.dart';
 
 class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({
-    required this.history,
-    required this.onClear,
-    required this.onBack,
-    super.key,
-  });
-
-  /// Записи від новіших до старіших.
-  final List<HistoryEntry> history;
-  final VoidCallback onClear;
-  final VoidCallback onBack;
+  const HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     debugPrint('build: HistoryScreen');
+    final counter = CounterScope.of(context);
+    final history = counter.history;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          tooltip: 'Назад',
-          onPressed: onBack,
-          icon: const Icon(Icons.arrow_back),
-        ),
         title: const Text('Історія змін'),
-        actions: [HistoryBadge(count: history.length)],
+        actions: const [HistoryBadge()],
       ),
       body: history.isEmpty
           ? const Center(child: Text('Історія поки порожня.'))
@@ -55,7 +42,7 @@ class HistoryScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                 child: OutlinedButton.icon(
-                  onPressed: onClear,
+                  onPressed: counter.clearHistory,
                   icon: const Icon(Icons.delete_outline),
                   label: const Text('Очистити історію'),
                 ),

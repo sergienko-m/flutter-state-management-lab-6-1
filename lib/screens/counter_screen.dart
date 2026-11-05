@@ -2,24 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../widgets/counter_panel.dart';
 import '../widgets/history_badge.dart';
+import 'history_screen.dart';
 
+/// Не читає [CounterScope]: сам екран не залежить від стану,
+/// тому не перебудовується при зміні лічильника.
 class CounterScreen extends StatelessWidget {
-  const CounterScreen({
-    required this.value,
-    required this.historyCount,
-    required this.onIncrement,
-    required this.onDecrement,
-    required this.onReset,
-    required this.onOpenHistory,
-    super.key,
-  });
-
-  final int value;
-  final int historyCount;
-  final ValueChanged<int> onIncrement;
-  final ValueChanged<int> onDecrement;
-  final VoidCallback onReset;
-  final VoidCallback onOpenHistory;
+  const CounterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +18,16 @@ class CounterScreen extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: 'Історія змін',
-            onPressed: onOpenHistory,
-            icon: HistoryBadge(count: historyCount),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const HistoryScreen()),
+              );
+            },
+            icon: const HistoryBadge(),
           ),
         ],
       ),
-      body: CounterPanel(
-        value: value,
-        onIncrement: onIncrement,
-        onDecrement: onDecrement,
-        onReset: onReset,
-      ),
+      body: const CounterPanel(),
     );
   }
 }
