@@ -46,19 +46,21 @@ flutter run
 
 ## Журнал перебудов (етап 2)
 
-У `build()` ключових віджетів є `debugPrint('build: <Віджет>')`. Дія: запустити `flutter run`, один раз натиснути `+` на екрані лічильника, скопіювати з консолі нові рядки.
-
-Очікування за кодом: перебудовуються лише `CounterPanel` і `HistoryBadge` (вони читають `CounterScope.of(context)`), а `CounterScreen` — ні.
+У `build()` ключових віджетів є `debugPrint('build: <Віджет>')`. Журнал знято тестом `test/rebuild_log_test.dart`: він перехоплює `debugPrint`, один раз натискає `+` і виводить зібрані рядки (`flutter test test/rebuild_log_test.dart`).
 
 ```text
-ВСТАВТЕ СЮДИ СВІЙ РЕАЛЬНИЙ ВИВІД КОНСОЛІ ПІСЛЯ НАТИСКАННЯ «+»
+--- початкова побудова ---
+build: CounterScreen
+build: CounterPanel
+build: HistoryBadge
+--- після натискання + ---
+build: CounterPanel
+build: HistoryBadge
 ```
 
-Для порівняння, на етапі 1 (`git checkout stage-1-lifting`) після `+` перебудовується весь екран: `CounterApp`, `CounterScreen`, `CounterPanel`, `HistoryBadge`.
+Після `+` перебудовуються лише `CounterPanel` (значення) і `HistoryBadge` (бейдж), бо тільки вони читають `CounterScope.of(context)`. `CounterScreen` не залежить від стану й не перебудовується. Зміна кроку перебудовує тільки `CounterPanel` через його власний `setState`.
 
-```text
-ВСТАВТЕ СЮДИ ВИВІД ЕТАПУ 1 (за бажанням)
-```
+На етапі 1 (`git checkout stage-1-lifting`) стан живе в `_CounterAppState`, тому `setState` перебудовує все дерево нижче: `CounterApp`, `CounterScreen`, `CounterPanel`, `HistoryBadge`.
 
 ## Скриншоти основних екранів
 
@@ -81,6 +83,7 @@ lib/
     └── history_badge.dart
 test/
 ├── counter_state_test.dart
+├── rebuild_log_test.dart
 └── widget_test.dart
 ```
 
